@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Model.dart';
 import 'Controller.dart';
+import 'FirebaseConnection.dart';
 
 Model model = new Model();
 Controller controller = new Controller(model);
@@ -196,7 +197,11 @@ class Csatlakozas extends StatelessWidget {
             fontSize: 22,
           ),
         ),
-        onPressed: () {},
+        onPressed: () {
+          FirebaseConnection fc = new FirebaseConnection();
+          fc.createRecord("Amit ide beirsz az megy az ab-ba");
+          fc.getData();
+        },
       ),
       backgroundColor: Color.fromRGBO(66, 66, 66, 1),
       appBar: AppBar(
