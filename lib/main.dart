@@ -148,7 +148,7 @@ class Menu extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: new BorderRadius.circular(25)),
               child: Text(
-                "Új Játék",
+                "Új Jásték",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 17,
