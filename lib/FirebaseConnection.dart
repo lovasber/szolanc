@@ -12,18 +12,25 @@ class FirebaseConnection{
       getData();
     }
 
-    bool idVanE(String id){
-      databaseReference.orderByChild(id).equalTo(id).once().then((snapshot){
-        databaseReference.reference();
-        if(snapshot!=null){
-          print("nincs ilyen");
-          return false;
-        }else{
-          print("Van id");
+    Future<bool> idLetezikE(String id)async{
+        final adat = await databaseReference.child(id).once();
+        if(adat.value != null){
+          print("Van ilyen id");
           return true;
+        }else{
+          print("Nincs ilyen id");
+          return false;
         }
+    }
 
-      });
+    Future<String> getSzo(String id)async{
+        final adat = await databaseReference.child(id).once();
+        if(adat.value != null){
+          print("${adat.value}");
+          return adat.value["adottSzo"];
+        }else{
+          return null;
+        }
     }
       
   void getData(){

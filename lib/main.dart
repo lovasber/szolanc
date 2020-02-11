@@ -204,7 +204,7 @@ class Csatlakozas extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          model.firebaseConn.idVanE(tfController.text);
+          model.firebaseConn.idLetezikE(tfController.text);
         },
       ),
       backgroundColor: Color.fromRGBO(66, 66, 66, 1),
