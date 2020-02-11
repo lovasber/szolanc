@@ -3,18 +3,29 @@ import 'package:firebase_database/firebase_database.dart';
 
 class FirebaseConnection{
   final databaseReference = FirebaseDatabase.instance.reference().child("Jatek");
-  //var _firebaseRef = FirebaseDatabase().reference().child("Jatek");
- // final databaseReference = Firestore.instance;
 
-   void createRecord(String szo){
-     databaseReference.push().set({
-       'adottSzo':szo
-     });
+   void createRecord(String szo,String jatekid){
+      var jatekId = databaseReference.child(jatekid);
+      jatekId.set({
+        'adottSzo':szo
+      });
+      getData();
+    }
 
-    getData();
-    
-  }
-  
+    bool idVanE(String id){
+      databaseReference.orderByChild(id).equalTo(id).once().then((snapshot){
+        databaseReference.reference();
+        if(snapshot!=null){
+          print("nincs ilyen");
+          return false;
+        }else{
+          print("Van id");
+          return true;
+        }
+
+      });
+    }
+      
   void getData(){
     databaseReference.once().then((DataSnapshot snapshot) {
       print('Data : ${snapshot.value}');

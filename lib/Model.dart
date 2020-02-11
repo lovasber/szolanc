@@ -8,14 +8,14 @@ class Model {
   List<String> osszesSzo;
   List<String> beirtSzavak;
   FirebaseConnection firebaseConn;
-  static const String JATEKID = "aa";
+  String JATEKID;
   String beirtSzavakS = "";
 
   final String chars = "abcdefghijklmnopqrstuvwxyz0123456789";
 
   Model() {
     beirtSzavak = List<String>();
-    final String sss = randomString(10);
+    final JATEKID = randomString(10);
     firebaseConn = new FirebaseConnection();
     //this.JATEKID = sss;
   }

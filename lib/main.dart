@@ -6,8 +6,8 @@ import 'Model.dart';
 import 'Controller.dart';
 //import 'FirebaseConnection.dart';
 
-Model model = new Model();
-Controller controller = new Controller(model);
+final Model model = new Model();
+final Controller controller = new Controller(model);
 TextEditingController tfController = new TextEditingController();
 String adottSzo = "";
 
@@ -20,7 +20,8 @@ void main() => runApp(
 class SzolancApp extends StatefulWidget {
   final String title;
 
-  SzolancApp({/*@required*/ this.title = "asdf"});
+
+  SzolancApp({/*@required*/ this.title = ""});
 
   @override
   _SzolancAppState createState() => _SzolancAppState();
@@ -41,13 +42,14 @@ class _SzolancAppState extends State<SzolancApp> {
            tfController.text = "";
             this.setState(() {});
           }
-          model.firebaseConn.createRecord(tfController.text);
+          model.firebaseConn.createRecord(tfController.text,model.JATEKID);
         },
       ),
       backgroundColor: Color.fromRGBO(66, 66, 66, 1),
       appBar: AppBar(
         title: Text(
-          widget.title,
+          //widget.title,
+          "${model.JATEKID}",
           style: TextStyle(
             color: Color.fromRGBO(0, 0, 0, 2),
           ),
@@ -152,7 +154,7 @@ class Menu extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: new BorderRadius.circular(25)),
               child: Text(
-                "Új Jásték",
+                "Új Játék",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 17,
@@ -202,7 +204,7 @@ class Csatlakozas extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          
+          model.firebaseConn.idVanE(tfController.text);
         },
       ),
       backgroundColor: Color.fromRGBO(66, 66, 66, 1),
@@ -232,6 +234,7 @@ class Csatlakozas extends StatelessWidget {
             Expanded(
               flex: 2,
               child: TextField(
+                controller: tfController,
                 style: TextStyle(
                   fontSize: 22,
                   color: Colors.white,
