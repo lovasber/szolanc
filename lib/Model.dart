@@ -2,10 +2,12 @@ import 'dart:async' show Future;
 import 'dart:math';
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:math' show Random;
+import 'FirebaseConnection.dart';
 
 class Model {
   List<String> osszesSzo;
   List<String> beirtSzavak;
+  FirebaseConnection firebaseConn;
   static const String JATEKID = "aa";
   String beirtSzavakS = "";
 
@@ -14,6 +16,7 @@ class Model {
   Model() {
     beirtSzavak = List<String>();
     final String sss = randomString(10);
+    firebaseConn = new FirebaseConnection();
     //this.JATEKID = sss;
   }
 

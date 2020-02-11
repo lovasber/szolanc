@@ -1,9 +1,10 @@
 //import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:szolanc/FirebaseConnection.dart';
 import 'Model.dart';
 import 'Controller.dart';
-import 'FirebaseConnection.dart';
+//import 'FirebaseConnection.dart';
 
 Model model = new Model();
 Controller controller = new Controller(model);
@@ -35,9 +36,12 @@ class _SzolancAppState extends State<SzolancApp> {
         label: Text("OK"),
         onPressed: () {
           if (controller.beirtSzoEllenoriz(tfController.text, adottSzo)) {
-            tfController.text = "";
+           String beirt = tfController.text;
+
+           tfController.text = "";
             this.setState(() {});
           }
+          model.firebaseConn.createRecord(tfController.text);
         },
       ),
       backgroundColor: Color.fromRGBO(66, 66, 66, 1),
@@ -198,9 +202,7 @@ class Csatlakozas extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          FirebaseConnection fc = new FirebaseConnection();
-          fc.createRecord("Amit ide beirsz az megy az ab-ba");
-          fc.getData();
+          
         },
       ),
       backgroundColor: Color.fromRGBO(66, 66, 66, 1),
