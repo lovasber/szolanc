@@ -9,15 +9,16 @@ class Model {
   List<String> beirtSzavak;
   FirebaseConnection firebaseConn;
   String JATEKID;
+  String JATEKOSID = "beirtId";
   String beirtSzavakS = "";
 
-  final String chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-
-  Model() {
+  Model(String jatekId) {
     beirtSzavak = List<String>();
-    final JATEKID = randomString(10);
+    JATEKID = jatekId;
+    //final JATEKID = randomString(10);
     firebaseConn = new FirebaseConnection();
-    //this.JATEKID = sss;
+    //JATEKOSID = firebaseConn.getUserId().toString();
+    // print("uid: $JATEKID");
   }
 
   Future<String> readData() async {
@@ -28,14 +29,5 @@ class Model {
     //int length = osszesSzo.length;
     //print("osszes SzoDb: $length"); //mukodik 2000
     return osszesSzo[rnd.nextInt(osszesSzo.length)];
-  }
-
-  String randomString(int strlen) {
-    Random rnd = new Random(new DateTime.now().millisecondsSinceEpoch);
-    String result = "";
-    for (int i = 0; i < strlen; i++) {
-      result += chars[rnd.nextInt(chars.length)];
-    }
-    return result.toUpperCase();
   }
 }
