@@ -10,22 +10,3 @@ void main() => runApp(
         home: new Menu(),
       ),
     );
-
-/*
-class AbUserName extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: StreamBuilder(
-          stream: Firestore.instance.collection('users').snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Text("...");
-            } else {
-              return Text("${snapshot.data.documents[0]}");
-            }
-          }),
-    );
-  }
-}
-*/

@@ -1,9 +1,7 @@
 import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:szolanc/FirebaseConnection.dart';
-import 'main.dart';
 import 'App.dart';
 
 TextEditingController tfController = new TextEditingController();
@@ -39,12 +37,9 @@ class Menu extends StatelessWidget {
                   fontSize: 17,
                 ),
               ),
-              onPressed: () async {
-                FirebaseConnection fbc = FirebaseConnection();
+              onPressed: () {
                 String id = randomString(10);
-                await fbc.ujJatekLetrehoz(id);
 
-                ///TODO
                 navigateToSubPage(
                     context,
                     SzolancApp(
@@ -96,7 +91,6 @@ class Csatlakozas extends StatelessWidget {
         onPressed: () async {
           FirebaseConnection fbc = new FirebaseConnection();
           if (await fbc.idLetezikE(tfController.text)) {
-            //TODO: Ezt hnap fixálni kell de most zsa Geszti
             print("Van ilyen id");
             navigateToSubPage(
                 context,
@@ -156,7 +150,7 @@ Future navigateToSubPage(context, target) async {
   Navigator.push(context, MaterialPageRoute(builder: (context) => target));
 }
 
-String randomString(int strlen) {
+String _randomString(int strlen) {
   final String chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   Random rnd = new Random(new DateTime.now().millisecondsSinceEpoch);
   String result = "";

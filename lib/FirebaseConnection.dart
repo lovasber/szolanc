@@ -1,30 +1,61 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
+//import 'package:flutter/cupertino.dart';
+import 'Model.dart';
 
 class FirebaseConnection {
-  final databaseReference =
-      FirebaseDatabase.instance.reference().child("Jatek");
+  final databaseReference = FirebaseDatabase.instance.reference();
 
-  void createRecord(String szo, String jatekid, List beirtSzavak) {
-    var jatekId = databaseReference.child(jatekid);
-    jatekId
-        .set({'adottSzo': szo, 'beirtszavak': beirtSzavak, 'adottJatekos': 0});
-    getData();
+  //databaseReference.onChildChanged.listen();
+
+  void createRecord(String szo, String jatekid, List beirtSzavak) async {
+    ///databaseReference.onChildChanged.listen(onData)
+
+    var jatekId = databaseReference.child(jatekid).child("Jatek");
+
+    int jatekosDb = await getMaxSorszam(jatekid);
+    int index = await getAktivSorszam(jatekid); //Jatek.sorszam
+    index++;
+    if (index > jatekosDb) {
+      index = 1;
+    }
+
+    jatekId.set(
+        {'adottSzo': szo, 'beirtszavak': beirtSzavak, 'AktivJatekos': index});
+
+    //getData();
   }
 
-  void ujJatekLetrehoz(jatekid) async {
-    //databaseReference.child(jatekid).set(jatekid);
-    //print(await getUserId().toString());
-    /*
+  void megelevoJatekhozCsatlakoz(String jatekid, Model model) async {
+    int sorszam;
+    sorszam = await getMaxSorszam(jatekid);
+    sorszam++;
+    model.JATEKOSSORSZAM = sorszam;
+
+    //print("id: $jatekid");
     databaseReference
+        .child(jatekid)
         .child("Felhasznalok")
-        .set({'uid': await getUserId().toString()});
-    print("ujjatekletrehoz");
-    */
-    String s = currentUser().toString();
-    print("UID: $s");
-    //getData();
+        .push()
+        .set({'uuid': model.JATEKOSID, 'sorszam': sorszam});
+  }
+
+  Future<String> ujJatekLetrehoz(String jatekid, Model model) async {
+    //ujszo
+    var szo = await model.readData();
+    model.beirtSzavak.add(szo);
+    print("szo: $szo");
+    var jatekId = databaseReference.child(jatekid).child("Jatek");
+    jatekId.set(
+        {'adottSzo': szo, 'beirtszavak': model.beirtSzavak, 'AktivJatekos': 1});
+    
+    databaseReference
+        .child(jatekid)
+        .child("Felhasznalok")
+        .push()
+        .set({'uuid': model.JATEKOSID, 'sorszam': 1});
+    
+    return  szo;
   }
 
   Future<bool> idLetezikE(String id) async {
@@ -38,28 +69,31 @@ class FirebaseConnection {
     }
   }
 
-  Future<String> currentUser() async {
-    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    final String uid = user.uid;
-    return user != null ? user.uid : null;
-  }
-
   Future<String> getUserId() async {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     final String uid = user.uid;
-    print(uid.length);
+    print(uid);
     return uid;
   }
 
-  void lepes(List<String> beirtSzavak, String id) {
-    databaseReference.child(id).update({'beirtszavak': beirtSzavak});
-  }
+  void lepes(List<String> beirtSzavak, String id) async {}
 
-  Future<String> getSzo(String id) async {
-    final adat = await databaseReference.child(id).once();
+  Future<String> getSzo(String id,Model model) async {
+    final adat = await databaseReference.child(id).child("Jatek").once();
     if (adat.value != null) {
       print("${adat.value}");
       return adat.value["adottSzo"];
+    } else {
+      return null;
+    }
+    
+  }
+
+  Future<List<String>> getbeirtSzavakLista(String id) async {
+    final adat = await databaseReference.child(id).child("Jatek").once();
+    if (adat.value != null) {
+      print("${adat.value}");
+      return adat.value["beirtszavak"];
     } else {
       return null;
     }
@@ -70,4 +104,39 @@ class FirebaseConnection {
       print('Data : ${snapshot.value}');
     });
   }
+
+  Future<int> getMaxSorszam(String id) async {
+    print("getSorszam on");
+    int sorszam;
+    await databaseReference
+        .child(id)
+        .child("Felhasznalok")
+        .once()
+        .then((DataSnapshot snapshot) {
+      Map beirtSzavak = snapshot.value;
+      sorszam = beirtSzavak.length;
+      print("meret: $sorszam");
+    });
+    return sorszam;
+  }
+
+  Future<int> getAktivSorszam(String id) async {
+    print("getSorszam on");
+    int sorszam;
+    await databaseReference
+        .child(id)
+        .child("Jatek")
+        .once()
+        .then((DataSnapshot snapshot) {
+      sorszam = snapshot.value["AktivJatekos"];
+      print("sorszam: $sorszam");
+    });
+    return sorszam;
+  }
 }
+
+/*
+* Ha frissül a beirtszavak tömb/adat
+* akkor léptetem a globális változót
+* ha az eléri a felhasználók számát akkor 1 lesz az értéke
+* */

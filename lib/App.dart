@@ -8,6 +8,8 @@ import 'Controller.dart';
 import 'menu.dart';
 import 'main.dart';
 
+//Hnap folyt köv!
+
 class SzolancApp extends StatefulWidget {
   final String title;
   String gameID;
@@ -27,14 +29,32 @@ class _SzolancAppState extends State<SzolancApp> {
   String adottSzo = "";
 
   _SzolancAppState(String gameID, bool ujgamE, String szo) {
-    print(" gameId: $gameID");
+    //print(" gameId: $gameID");
     model = new Model(gameID);
     print("minden ok");
+
     controller = new Controller(model);
+
+    model.firebaseConn.databaseReference
+        .child(gameID)
+        .child("Jatek")
+        .child("beirtszavak")
+        .onChildAdded
+        .listen((data) {
+      print("data: ${data.snapshot.value}");
+
+      setState(() {
+        model.adottSzo = data.snapshot.value;
+        adottSzo = data.snapshot.value;
+      });
+    });
+
     if (ujgamE) {
-      //tandom szót írjon ki
+      model.firebaseConn.ujJatekLetrehoz(gameID, model);
+      //random szót írjon ki
       //adottSzo =  model.readData() as String;
     } else {
+      controller.model.firebaseConn.megelevoJatekhozCsatlakoz(gameID, model);
       //az ab-ból kérje el a szót
       //adottSzo = szo;
     }
@@ -47,19 +67,20 @@ class _SzolancAppState extends State<SzolancApp> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
         label: Text("OK"),
-        onPressed: () {
-          //if(this.controller.model.firebaseConn.soronLevoJatekos()==model.jatekosId){
+        onPressed: () async {
+          //if(this.controller.model.firebaseConn.getAktivSorszam()==model.jatekosId){
           //widget.ujGame = true;
           //}else{
           widget.ujGamE = false;
           //}
           if (this.controller.beirtSzoEllenoriz(tfController.text, adottSzo)) {
             String beirt = tfController.text;
+            model.firebaseConn.createRecord(
+                tfController.text, model.JATEKID, model.beirtSzavak);
             tfController.text = "";
+
             this.setState(() {});
           }
-          model.firebaseConn.createRecord(tfController.text, model.JATEKID,
-              model.beirtSzavak); //TODO: ez a sor majd az igaz ágba kell
         },
       ),
       backgroundColor: Color.fromRGBO(66, 66, 66, 1),
@@ -78,15 +99,16 @@ class _SzolancAppState extends State<SzolancApp> {
           children: <Widget>[
             SizedBox(height: 15.0),
             FutureBuilder(
-                future: model.readData(),
+                future: model.firebaseConn.getSzo(model.JATEKID, model),
+                //model.readData(),
                 builder:
                     (BuildContext context, AsyncSnapshot<String> snapshot) {
                   List<Widget> children;
                   if (snapshot.hasData) {
                     children = <Widget>[
                       Text(
-                        "${adottSzo = widget.ujGamE ? snapshot.data : "másik jatekos jön"}"
-                            .toUpperCase(), //=
+                        "${snapshot.data}" //"${model.adottSzo = snapshot.data}" //itt kell majd megnézni hogy elsp kör-e, ha nem akkor kiírni a lista utolsó szavát
+                            .toUpperCase(),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 24,
@@ -119,14 +141,14 @@ class _SzolancAppState extends State<SzolancApp> {
                   flex: 2,
                   child: TextField(
                     textInputAction: TextInputAction.go,
-                    controller: tfController,
+                    controller: this.tfController,
                     style: TextStyle(
                       color: Color.fromRGBO(255, 255, 255, 5),
                       fontSize: 23,
                     ),
                     decoration: InputDecoration(
-                      hintText: "Tipp",
-                    ),
+                        //hintText: "Tipp",
+                        ),
                   ),
                 ),
               ],
