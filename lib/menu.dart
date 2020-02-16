@@ -91,7 +91,7 @@ class Csatlakozas extends StatelessWidget {
         onPressed: () async {
           FirebaseConnection fbc = new FirebaseConnection();
           if (await fbc.idLetezikE(tfController.text)) {
-            print("Van ilyen id");
+            //print("Van ilyen id");
             navigateToSubPage(
                 context,
                 SzolancApp(
@@ -100,7 +100,7 @@ class Csatlakozas extends StatelessWidget {
                   ujGamE: false,
                 ));
           } else {
-            print("gáz van");
+            //print("Nincs ilyen id");
           }
           //model.firebaseConn.idLetezikE(tfController.text);
         },

@@ -75,7 +75,7 @@ class FirebaseConnection {
   Future<String> getUserId() async {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     final String uid = user.uid;
-    print(uid);
+    
     return uid;
   }
 
@@ -84,7 +84,7 @@ class FirebaseConnection {
   Future<String> getSzo(String id, Model model) async {
     final adat = await databaseReference.child(id).child("Jatek").once();
     if (adat.value != null) {
-      print("${adat.value}");
+     // print("${adat.value}");
       return adat.value["adottSzo"];
     } else {
       return null;
@@ -94,7 +94,7 @@ class FirebaseConnection {
   Future<List<String>> getbeirtSzavakLista(String id) async {
     final adat = await databaseReference.child(id).child("Jatek").once();
     if (adat.value != null) {
-      print("${adat.value}");
+      //print("${adat.value}");
 
       return List.from(adat.value["beirtszavak"]);
       //return adat.value["beirtszavak"];
@@ -105,12 +105,12 @@ class FirebaseConnection {
 
   void getData() {
     databaseReference.once().then((DataSnapshot snapshot) {
-      print('Data : ${snapshot.value}');
+      //print('Data : ${snapshot.value}');
     });
   }
 
   Future<int> getMaxSorszam(String id) async {
-    print("getSorszam on");
+    
     int sorszam;
     await databaseReference
         .child(id)
@@ -119,13 +119,12 @@ class FirebaseConnection {
         .then((DataSnapshot snapshot) {
       Map beirtSzavak = snapshot.value;
       sorszam = beirtSzavak.length;
-      print("meret: $sorszam");
+      
     });
     return sorszam;
   }
 
   Future<int> getAktivSorszam(String id) async {
-    print("getSorszam on");
     int sorszam;
     await databaseReference
         .child(id)
@@ -133,14 +132,7 @@ class FirebaseConnection {
         .once()
         .then((DataSnapshot snapshot) {
       sorszam = snapshot.value["AktivJatekos"];
-      print("sorszam: $sorszam");
     });
     return sorszam;
   }
 }
-
-/*
-* Ha frissül a beirtszavak tömb/adat
-* akkor léptetem a globális változót
-* ha az eléri a felhasználók számát akkor 1 lesz az értéke
-* */

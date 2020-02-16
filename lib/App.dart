@@ -26,7 +26,7 @@ class _SzolancAppState extends State<SzolancApp> {
   _SzolancAppState(String gameID, bool ujgamE, String szo) {
     //print(" gameId: $gameID");
     model = new Model(gameID);
-    print("minden ok");
+
 
     controller = new Controller(model);
 
@@ -36,7 +36,7 @@ class _SzolancAppState extends State<SzolancApp> {
         .child("beirtszavak")
         .onChildAdded
         .listen((data) {
-      print("data: ${data.snapshot.value}");
+     // print("data: ${data.snapshot.value}");
 
       setState(() {
         //model.beirtSzavak = da
@@ -56,7 +56,7 @@ class _SzolancAppState extends State<SzolancApp> {
 
   void betolt(String gameID) async {
     model.beirtSzavak = await model.firebaseConn.getbeirtSzavakLista(gameID);
-    print("betolt: ${model.beirtSzavak}");
+    
     model.beirtSzavakS = model.beirtSzavak.toString();
   }
 
@@ -107,7 +107,7 @@ class _SzolancAppState extends State<SzolancApp> {
                   if (snapshot.hasData) {
                     children = <Widget>[
                       Text(
-                        "${snapshot.data}" //"${model.adottSzo = snapshot.data}"
+                        "${snapshot.data}"
                             .toUpperCase(),
                         style: TextStyle(
                           color: Colors.white,
@@ -154,13 +154,38 @@ class _SzolancAppState extends State<SzolancApp> {
               ],
             ),
             SizedBox(height: 25.0),
-            Text(
-              "${model.beirtSzavak}",
+            Expanded(
+          child: SizedBox(
+            height: 200.0,
+            child: new ListView.builder(              
+              scrollDirection: Axis.vertical,
+              itemCount: model.beirtSzavak.length,
+              itemBuilder: (BuildContext ctxt, int index) {
+                
+                return new Text(           //LISTA      
+                  model.beirtSzavak[index],
+                  style: TextStyle(
+                    color: Colors.white ,
+                    fontSize: 20,
+                  ),
+                  );
+              },
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 60,
+        )
+    /*
+          Marquee(
+            text:
+            "${model.beirtSzavak}",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 23,
+                ),
               ),
-            ),
+    */
           ],
         ),
       ),
