@@ -5,6 +5,7 @@ import 'Model.dart';
 //TODO : Ne csatlakoztasson le amikor visszalépsz a főmenübe
 //TODO : Megrázni a usert ha rossz szót ír be
 //TODO : Még több szó
+//TODO : valamin keresztül meghívni a másikat
 
 class Controller {
   Model model;
@@ -25,7 +26,7 @@ class Controller {
         print("ujszó");
 
         model.beirtSzavak.add(beirt);
-        model.beirtSzavakS = model.beirtSzavak.toString();
+
         joSzo = true;
       } else {
         print("nem uj szó!");

@@ -2,13 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:szolanc/FirebaseConnection.dart';
 import 'Model.dart';
 import 'Controller.dart';
-import 'menu.dart';
-import 'main.dart';
-
-//Hnap folyt köv!
 
 class SzolancApp extends StatefulWidget {
   final String title;
@@ -44,20 +39,25 @@ class _SzolancAppState extends State<SzolancApp> {
       print("data: ${data.snapshot.value}");
 
       setState(() {
+        //model.beirtSzavak = da
         model.adottSzo = data.snapshot.value;
         adottSzo = data.snapshot.value;
+        betolt(gameID);
       });
     });
 
     if (ujgamE) {
       model.firebaseConn.ujJatekLetrehoz(gameID, model);
-      //random szót írjon ki
-      //adottSzo =  model.readData() as String;
     } else {
+      betolt(gameID);
       controller.model.firebaseConn.megelevoJatekhozCsatlakoz(gameID, model);
-      //az ab-ból kérje el a szót
-      //adottSzo = szo;
     }
+  }
+
+  void betolt(String gameID) async {
+    model.beirtSzavak = await model.firebaseConn.getbeirtSzavakLista(gameID);
+    print("betolt: ${model.beirtSzavak}");
+    model.beirtSzavakS = model.beirtSzavak.toString();
   }
 
   @override
@@ -76,7 +76,7 @@ class _SzolancAppState extends State<SzolancApp> {
           if (this.controller.beirtSzoEllenoriz(tfController.text, adottSzo)) {
             String beirt = tfController.text;
             model.firebaseConn.createRecord(
-                tfController.text, model.JATEKID, model.beirtSzavak);
+                tfController.text, model.JATEKID, model.beirtSzavak, model);
             tfController.text = "";
 
             this.setState(() {});
@@ -107,7 +107,7 @@ class _SzolancAppState extends State<SzolancApp> {
                   if (snapshot.hasData) {
                     children = <Widget>[
                       Text(
-                        "${snapshot.data}" //"${model.adottSzo = snapshot.data}" //itt kell majd megnézni hogy elsp kör-e, ha nem akkor kiírni a lista utolsó szavát
+                        "${snapshot.data}" //"${model.adottSzo = snapshot.data}"
                             .toUpperCase(),
                         style: TextStyle(
                           color: Colors.white,
@@ -155,7 +155,7 @@ class _SzolancAppState extends State<SzolancApp> {
             ),
             SizedBox(height: 25.0),
             Text(
-              "${model.beirtSzavakS}",
+              "${model.beirtSzavak}",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 23,

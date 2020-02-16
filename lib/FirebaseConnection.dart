@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-//import 'package:flutter/cupertino.dart';
 import 'Model.dart';
 
 class FirebaseConnection {
@@ -8,7 +7,8 @@ class FirebaseConnection {
 
   //databaseReference.onChildChanged.listen();
 
-  void createRecord(String szo, String jatekid, List beirtSzavak) async {
+  void createRecord(
+      String szo, String jatekid, List beirtSzavak, Model model) async {
     ///databaseReference.onChildChanged.listen(onData)
 
     var jatekId = databaseReference.child(jatekid).child("Jatek");
@@ -22,6 +22,8 @@ class FirebaseConnection {
 
     jatekId.set(
         {'adottSzo': szo, 'beirtszavak': beirtSzavak, 'AktivJatekos': index});
+
+    model.beirtSzavak = await getbeirtSzavakLista(jatekid);
 
     //getData();
   }
@@ -38,6 +40,7 @@ class FirebaseConnection {
         .child("Felhasznalok")
         .push()
         .set({'uuid': model.JATEKOSID, 'sorszam': sorszam});
+    model.beirtSzavak = await getbeirtSzavakLista(jatekid);
   }
 
   Future<String> ujJatekLetrehoz(String jatekid, Model model) async {
@@ -48,14 +51,14 @@ class FirebaseConnection {
     var jatekId = databaseReference.child(jatekid).child("Jatek");
     jatekId.set(
         {'adottSzo': szo, 'beirtszavak': model.beirtSzavak, 'AktivJatekos': 1});
-    
+
     databaseReference
         .child(jatekid)
         .child("Felhasznalok")
         .push()
         .set({'uuid': model.JATEKOSID, 'sorszam': 1});
-    
-    return  szo;
+
+    return szo;
   }
 
   Future<bool> idLetezikE(String id) async {
@@ -78,7 +81,7 @@ class FirebaseConnection {
 
   void lepes(List<String> beirtSzavak, String id) async {}
 
-  Future<String> getSzo(String id,Model model) async {
+  Future<String> getSzo(String id, Model model) async {
     final adat = await databaseReference.child(id).child("Jatek").once();
     if (adat.value != null) {
       print("${adat.value}");
@@ -86,14 +89,15 @@ class FirebaseConnection {
     } else {
       return null;
     }
-    
   }
 
   Future<List<String>> getbeirtSzavakLista(String id) async {
     final adat = await databaseReference.child(id).child("Jatek").once();
     if (adat.value != null) {
       print("${adat.value}");
-      return adat.value["beirtszavak"];
+
+      return List.from(adat.value["beirtszavak"]);
+      //return adat.value["beirtszavak"];
     } else {
       return null;
     }
