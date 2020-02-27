@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:szolanc/CountDownTimer.dart';
 import 'Model.dart';
 import 'Controller.dart';
 
@@ -26,7 +27,7 @@ class _SzolancAppState extends State<SzolancApp> {
   _SzolancAppState(String gameID, bool ujgamE, String szo) {
     //print(" gameId: $gameID");
     model = new Model(gameID);
-
+    
 
     controller = new Controller(model);
 
@@ -36,7 +37,7 @@ class _SzolancAppState extends State<SzolancApp> {
         .child("beirtszavak")
         .onChildAdded
         .listen((data) {
-     // print("data: ${data.snapshot.value}");
+      // print("data: ${data.snapshot.value}");
 
       setState(() {
         //model.beirtSzavak = da
@@ -56,18 +57,21 @@ class _SzolancAppState extends State<SzolancApp> {
 
   void betolt(String gameID) async {
     model.beirtSzavak = await model.firebaseConn.getbeirtSzavakLista(gameID);
-    
+
     model.beirtSzavakS = model.beirtSzavak.toString();
+   
   }
 
   @override
   Widget build(BuildContext context) {
+    
     // TODO: implement build
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
         label: Text("OK"),
         onPressed: () async {
+          CountDownTimerState().startTimer();
           //if(this.controller.model.firebaseConn.getAktivSorszam()==model.jatekosId){
           //widget.ujGame = true;
           //}else{
@@ -98,6 +102,21 @@ class _SzolancAppState extends State<SzolancApp> {
         child: Column(
           children: <Widget>[
             SizedBox(height: 15.0),
+            Row(
+              children: <Widget>[
+                Expanded(child: CountDownTimer(),)
+                
+                //Text("na")
+              ],
+              /*
+              children: <Widget>[
+                Expanded(
+                  flex: 2,
+                  child: Text("${controller.current}"), //TODO
+                )
+              ],*/
+            ),
+            SizedBox(height: 15.0),
             FutureBuilder(
                 future: model.firebaseConn.getSzo(model.JATEKID, model),
                 //model.readData(),
@@ -107,8 +126,7 @@ class _SzolancAppState extends State<SzolancApp> {
                   if (snapshot.hasData) {
                     children = <Widget>[
                       Text(
-                        "${snapshot.data}"
-                            .toUpperCase(),
+                        "${snapshot.data}".toUpperCase(),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 24,
@@ -155,28 +173,28 @@ class _SzolancAppState extends State<SzolancApp> {
             ),
             SizedBox(height: 25.0),
             Expanded(
-          child: SizedBox(
-            height: 200.0,
-            child: new ListView.builder(              
-              scrollDirection: Axis.vertical,
-              itemCount: model.beirtSzavak.length,
-              itemBuilder: (BuildContext ctxt, int index) {
-                
-                return new Text(           //LISTA      
-                  model.beirtSzavak[index],
-                  style: TextStyle(
-                    color: Colors.white ,
-                    fontSize: 20,
-                  ),
-                  );
-              },
+              child: SizedBox(
+                height: 200.0,
+                child: new ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: model.beirtSzavak.length,
+                  itemBuilder: (BuildContext ctxt, int index) {
+                    return new Text(
+                      //LISTA
+                      model.beirtSzavak[index],
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
-          ),
-        ),
-        SizedBox(
-          height: 60,
-        )
-    /*
+            SizedBox(
+              height: 60,
+            )
+            /*
           Marquee(
             text:
             "${model.beirtSzavak}",

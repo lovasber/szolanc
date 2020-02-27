@@ -14,6 +14,7 @@ class Model {
   String beirtSzavakS = "";
   int JATEKOSSORSZAM;
   String adottSzo;
+  String jatekosNev;
 
   Model(String jatekId) {
     var uuid = Uuid();

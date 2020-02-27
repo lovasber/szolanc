@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'Model.dart';
+import 'package:quiver/async.dart';
 
 //TODO : sz,cs,gy bugokat fixelni
 //TODO : Időre menjen
@@ -6,10 +9,14 @@ import 'Model.dart';
 //TODO : Megrázni a usert ha rossz szót ír be
 //TODO : Még több szó
 //TODO : valamin keresztül meghívni a másikat
+//TODO : Usereket törölni ha nem aktívak
 
 class Controller {
   Model model;
   var app;
+  Timer timer;
+  int start = 10;
+  int current = 10;
 
   Controller(Model model) {
     //this.firebase = new  FirebaseUser();
@@ -67,5 +74,24 @@ class Controller {
       letezik = true;
     }
     return letezik;
+  }
+
+  void startTimer() {
+    CountdownTimer countDownTimer = new CountdownTimer(
+      new Duration(seconds: start),
+      new Duration(seconds: 1),
+    );
+
+    var sub = countDownTimer.listen(null);
+    sub.onData((duration) {
+      //setState(() {
+      current = start - duration.elapsed.inSeconds;
+      //});
+    });
+
+    sub.onDone(() {
+      print("Done");
+      sub.cancel();
+    });
   }
 }
