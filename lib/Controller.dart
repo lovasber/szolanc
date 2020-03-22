@@ -1,15 +1,15 @@
 import 'dart:async';
-
+import 'package:flutter/material.dart';
 import 'Model.dart';
 import 'package:quiver/async.dart';
 
 //TODO : sz,cs,gy bugokat fixelni
-//TODO : Időre menjen
 //TODO : Ne csatlakoztasson le amikor visszalépsz a főmenübe
 //TODO : Megrázni a usert ha rossz szót ír be
 //TODO : Még több szó
 //TODO : valamin keresztül meghívni a másikat
 //TODO : Usereket törölni ha nem aktívak
+//TODO : Userenként elmenteni a listákat
 
 class Controller {
   Model model;
@@ -32,7 +32,7 @@ class Controller {
       if (ujSzoE(beirt, model)) {
         print("ujszó");
 
-        model.beirtSzavak.add(beirt);
+        model.osszesBeirtSzoLista.add(beirt);
 
         joSzo = true;
       } else {
@@ -70,7 +70,7 @@ class Controller {
 
   bool ujSzoE(String beirt, Model model) {
     bool letezik = false;
-    if (!model.beirtSzavak.contains(beirt.toLowerCase())) {
+    if (!model.osszesBeirtSzoLista.contains(beirt.toLowerCase())) {
       letezik = true;
     }
     return letezik;
@@ -93,5 +93,9 @@ class Controller {
       print("Done");
       sub.cancel();
     });
+  }
+
+  Future navigateToSubPage(context, target) async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => target));
   }
 }

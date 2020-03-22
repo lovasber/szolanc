@@ -12,6 +12,7 @@ class Menu extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color.fromRGBO(66, 66, 66, 1),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           "Szólánc",
           style: TextStyle(

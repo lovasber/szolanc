@@ -27,7 +27,6 @@ class _SzolancAppState extends State<SzolancApp> {
   _SzolancAppState(String gameID, bool ujgamE, String szo) {
     //print(" gameId: $gameID");
     model = new Model(gameID);
-    
 
     controller = new Controller(model);
 
@@ -56,33 +55,36 @@ class _SzolancAppState extends State<SzolancApp> {
   }
 
   void betolt(String gameID) async {
-    model.beirtSzavak = await model.firebaseConn.getbeirtSzavakLista(gameID);
+    model.osszesBeirtSzoLista =
+        await model.firebaseConn.getbeirtSzavakLista(gameID);
 
-    model.beirtSzavakS = model.beirtSzavak.toString();
-   
+    model.beirtSzavakS = model.osszesBeirtSzoLista.toString();
   }
 
   @override
   Widget build(BuildContext context) {
-    
     // TODO: implement build
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
         label: Text("OK"),
         onPressed: () async {
-          CountDownTimerState().startTimer();
+          //setState(() {
+          //CountDownTimerState().startTimer();
+          //});
+
           //if(this.controller.model.firebaseConn.getAktivSorszam()==model.jatekosId){
           //widget.ujGame = true;
           //}else{
           widget.ujGamE = false;
           //}
+          CountDownTimer().setTimer(10);
           if (this.controller.beirtSzoEllenoriz(tfController.text, adottSzo)) {
             String beirt = tfController.text;
-            model.firebaseConn.createRecord(
-                tfController.text, model.JATEKID, model.beirtSzavak, model);
+            model.firebaseConn.createRecord(tfController.text, model.JATEKID,
+                model.osszesBeirtSzoLista, model);
             tfController.text = "";
-
+            CountDownTimerState().startTimer(); //Nullázza az időzítőt
             this.setState(() {});
           }
         },
@@ -104,8 +106,10 @@ class _SzolancAppState extends State<SzolancApp> {
             SizedBox(height: 15.0),
             Row(
               children: <Widget>[
-                Expanded(child: CountDownTimer(),)
-                
+                Expanded(
+                  child: CountDownTimer(),
+                )
+
                 //Text("na")
               ],
               /*
@@ -172,28 +176,76 @@ class _SzolancAppState extends State<SzolancApp> {
               ],
             ),
             SizedBox(height: 25.0),
-            Expanded(
-              child: SizedBox(
-                height: 200.0,
-                child: new ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: model.beirtSzavak.length,
-                  itemBuilder: (BuildContext ctxt, int index) {
-                    return new Text(
-                      //LISTA
-                      model.beirtSzavak[index],
+            Center(
+              child: Row(
+                children: <Widget>[
+                  RaisedButton(
+                    child: Text(
+                      "Minden szó",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20.0,
+                  ),
+                  RaisedButton(
+                    child: Text(
+                      "Saját szavaim",
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(
-              height: 60,
+            Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: SizedBox(
+                    height: 500.0,
+                    child: new ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: model.osszesBeirtSzoLista.length,
+                      itemBuilder: (BuildContext ctxt, int index) {
+                        return new Text(
+                          //LISTA Minden szó
+                          model.osszesBeirtSzoLista[index],
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: SizedBox(
+                    height: 500.0,
+                    child: new ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: model.osszesBeirtSzoLista.length,
+                      itemBuilder: (BuildContext ctxt, int index) {
+                        return new Text(
+                          //LISTA Minden szó
+                          model.osszesBeirtSzoLista[index],
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
             )
+
             /*
           Marquee(
             text:

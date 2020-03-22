@@ -7,7 +7,8 @@ import 'package:uuid/uuid.dart';
 
 class Model {
   List<String> osszesSzo;
-  List<String> beirtSzavak;
+  List<String> osszesBeirtSzoLista;
+  List<String> sajatBeirtSzavak;
   FirebaseConnection firebaseConn;
   String JATEKID;
   String JATEKOSID;
@@ -18,7 +19,7 @@ class Model {
 
   Model(String jatekId) {
     var uuid = Uuid();
-    beirtSzavak = List<String>();
+    osszesBeirtSzoLista = List<String>();
     JATEKID = jatekId;
     firebaseConn = new FirebaseConnection();
     JATEKOSID = uuid.v1();

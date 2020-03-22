@@ -23,7 +23,7 @@ class FirebaseConnection {
     jatekId.set(
         {'adottSzo': szo, 'beirtszavak': beirtSzavak, 'AktivJatekos': index});
 
-    model.beirtSzavak = await getbeirtSzavakLista(jatekid);
+    model.osszesBeirtSzoLista = await getbeirtSzavakLista(jatekid);
 
     //getData();
   }
@@ -40,17 +40,20 @@ class FirebaseConnection {
         .child("Felhasznalok")
         .push()
         .set({'uuid': model.JATEKOSID, 'sorszam': sorszam});
-    model.beirtSzavak = await getbeirtSzavakLista(jatekid);
+    model.osszesBeirtSzoLista = await getbeirtSzavakLista(jatekid);
   }
 
   Future<String> ujJatekLetrehoz(String jatekid, Model model) async {
     //ujszo
     var szo = await model.readData();
-    model.beirtSzavak.add(szo);
+    model.osszesBeirtSzoLista.add(szo);
     print("szo: $szo");
     var jatekId = databaseReference.child(jatekid).child("Jatek");
-    jatekId.set(
-        {'adottSzo': szo, 'beirtszavak': model.beirtSzavak, 'AktivJatekos': 1});
+    jatekId.set({
+      'adottSzo': szo,
+      'beirtszavak': model.osszesBeirtSzoLista,
+      'AktivJatekos': 1
+    });
 
     databaseReference
         .child(jatekid)
@@ -75,7 +78,7 @@ class FirebaseConnection {
   Future<String> getUserId() async {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     final String uid = user.uid;
-    
+
     return uid;
   }
 
@@ -84,7 +87,7 @@ class FirebaseConnection {
   Future<String> getSzo(String id, Model model) async {
     final adat = await databaseReference.child(id).child("Jatek").once();
     if (adat.value != null) {
-     // print("${adat.value}");
+      // print("${adat.value}");
       return adat.value["adottSzo"];
     } else {
       return null;
@@ -110,7 +113,6 @@ class FirebaseConnection {
   }
 
   Future<int> getMaxSorszam(String id) async {
-    
     int sorszam;
     await databaseReference
         .child(id)
@@ -119,7 +121,6 @@ class FirebaseConnection {
         .then((DataSnapshot snapshot) {
       Map beirtSzavak = snapshot.value;
       sorszam = beirtSzavak.length;
-      
     });
     return sorszam;
   }
