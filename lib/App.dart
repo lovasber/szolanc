@@ -11,26 +11,25 @@ class SzolancApp extends StatefulWidget {
   String gameID;
   bool ujGamE;
   String szo;
+  Model model;
 
-  SzolancApp({this.title = "id", this.gameID, @required this.ujGamE, this.szo});
+  SzolancApp({this.title = "id", this.gameID, @required this.ujGamE, this.szo,  @required this.model});
 
   @override
-  _SzolancAppState createState() => _SzolancAppState(gameID, ujGamE, szo);
+  _SzolancAppState createState() => _SzolancAppState(gameID, ujGamE, szo, this.model);
 }
 
 class _SzolancAppState extends State<SzolancApp> {
-  static Model model;
+  Model model;
   Controller controller;
   TextEditingController tfController = new TextEditingController();
   String adottSzo = "";
 
-  _SzolancAppState(String gameID, bool ujgamE, String szo) {
-    //print(" gameId: $gameID");
-    model = new Model(gameID);
+  _SzolancAppState(String gameID, bool ujgamE, String szo, Model model) {
+    this.model = model;
+    this.controller = new Controller(this.model);
 
-    controller = new Controller(model);
-
-    model.firebaseConn.databaseReference
+    this.model.firebaseConn.databaseReference
         .child(gameID)
         .child("Jatek")
         .child("beirtszavak")
@@ -38,20 +37,20 @@ class _SzolancAppState extends State<SzolancApp> {
         .listen((data) {
       // print("data: ${data.snapshot.value}");
 
-      setState(() {
-        //model.beirtSzavak = da
-        model.adottSzo = data.snapshot.value;
-        adottSzo = data.snapshot.value;
-        betolt(gameID);
-      });
-    });
+          setState(() {
+            //model.beirtSzavak = da
+            this.model.adottSzo = data.snapshot.value;
+            adottSzo = data.snapshot.value;
+            betolt(gameID);
+          });
+        });
 
-    if (ujgamE) {
-      model.firebaseConn.ujJatekLetrehoz(gameID, model);
-    } else {
-      betolt(gameID);
-      controller.model.firebaseConn.megelevoJatekhozCsatlakoz(gameID, model);
-    }
+      if (ujgamE) {
+        this.model.firebaseConn.ujJatekLetrehoz(gameID, this.model);
+      } else {
+        betolt(gameID);
+        controller.model.firebaseConn.megelevoJatekhozCsatlakoz(gameID, this.model);
+      }
   }
 
   void betolt(String gameID) async {
@@ -81,6 +80,9 @@ class _SzolancAppState extends State<SzolancApp> {
           CountDownTimer().setTimer(10);
           if (this.controller.beirtSzoEllenoriz(tfController.text, adottSzo)) {
             String beirt = tfController.text;
+
+            //ITT INDULT RÉGEN A JÁTÉK
+
             model.firebaseConn.createRecord(tfController.text, model.JATEKID,
                 model.osszesBeirtSzoLista, model);
             tfController.text = "";

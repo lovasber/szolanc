@@ -7,7 +7,7 @@ import 'package:quiver/async.dart';
 //TODO : Ne csatlakoztasson le amikor visszalépsz a főmenübe
 //TODO : Megrázni a usert ha rossz szót ír be
 //TODO : Még több szó
-//TODO : valamin keresztül meghívni a másikat
+//TODO : valamin keresztül meghívni a másikat - qr kód
 //TODO : Usereket törölni ha nem aktívak
 //TODO : Userenként elmenteni a listákat
 
@@ -19,7 +19,6 @@ class Controller {
   int current = 10;
 
   Controller(Model model) {
-    //this.firebase = new  FirebaseUser();
     app = this.model = model;
   }
 
@@ -41,10 +40,6 @@ class Controller {
     } else {
       print("nem lánc");
     }
-    /*} else {
-      print("nem létezik");
-    }*/
-
     return joSzo;
   }
 

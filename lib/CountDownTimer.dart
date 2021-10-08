@@ -45,7 +45,7 @@ class CountDownTimerState extends State<CountDownTimer>
   }
 
   void startTimer() {
-    start = 10;
+    start = 30;
     const oneSec = const Duration(seconds: 1);
     try {
       timer = new Timer.periodic(

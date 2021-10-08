@@ -5,8 +5,20 @@ import 'package:flutter/material.dart';
 import 'menu.dart';
 
 
+/*
 void main() => runApp(
       MaterialApp(
         home: new Menu(),
       ),
     );
+ */
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(
+    MaterialApp(
+    home: new Menu(),
+    ),
+  );
+}

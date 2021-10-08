@@ -17,18 +17,28 @@ class Model {
   String adottSzo;
   String jatekosNev;
 
-  Model(String jatekId) {
+  Model(String jatekId)  {
     var uuid = Uuid();
-    osszesBeirtSzoLista = List<String>();
+    osszesBeirtSzoLista = []; //List<String>();
     JATEKID = jatekId;
-    firebaseConn = new FirebaseConnection();
+    setConnection();
     JATEKOSID = uuid.v1();
   }
 
+  setConnection() async {
+    this.firebaseConn = await new FirebaseConnection();
+  }
+
+  setJAtekID(String jatekId){
+    this.JATEKID = jatekId;
+  }
+
   Future<String> readData() async {
-    String jolo = await rootBundle.loadString('assets/szavak.txt');
-    this.osszesSzo = jolo.split("\n");
+    String szavak = await rootBundle.loadString('assets/szavak.txt');
+    this.osszesSzo = szavak.split("\n");
     Random rnd = new Random();
     return osszesSzo[rnd.nextInt(osszesSzo.length)];
   }
+
+
 }

@@ -3,7 +3,19 @@ import 'package:firebase_database/firebase_database.dart';
 import 'Model.dart';
 
 class FirebaseConnection {
-  final databaseReference = FirebaseDatabase.instance.reference();
+   //= FirebaseDatabase.instance.reference();
+  DatabaseReference databaseReference; //= FirebaseDatabase.instance.reference();
+
+
+
+  FirebaseConnection()  {
+    setConnection();
+  }
+
+  setConnection() async {
+    databaseReference =  FirebaseDatabase.instance.reference();
+    print("Connection ready");
+  }
 
   //databaseReference.onChildChanged.listen();
 
@@ -11,7 +23,7 @@ class FirebaseConnection {
       String szo, String jatekid, List beirtSzavak, Model model) async {
     ///databaseReference.onChildChanged.listen(onData)
 
-    var jatekId = databaseReference.child(jatekid).child("Jatek");
+    var jatekId = await databaseReference.child(jatekid).child("Jatek");
 
     int jatekosDb = await getMaxSorszam(jatekid);
     int index = await getAktivSorszam(jatekid); //Jatek.sorszam
@@ -52,7 +64,8 @@ class FirebaseConnection {
     jatekId.set({
       'adottSzo': szo,
       'beirtszavak': model.osszesBeirtSzoLista,
-      'AktivJatekos': 1
+      'AktivJatekos': 1,
+      'JatekFutE': false
     });
 
     databaseReference
@@ -64,8 +77,34 @@ class FirebaseConnection {
     return szo;
   }
 
+  Future<bool> getJatekFutE(String id) async {
+    bool jatekFut;
+    await databaseReference
+        .child(id)
+        .child("Jatek")
+        .once()
+        .then((DataSnapshot snapshot) {
+      jatekFut = snapshot.value["JatekFutE"];
+    });
+
+    return jatekFut;
+  }
+
+  Future<bool> setJatekFutE(String id, bool futE) async {
+    bool jatekFut;
+    await databaseReference
+        .child(id)
+        .child("Jatek")
+        .once()
+        .then((DataSnapshot snapshot) {
+      snapshot.value["JatekFutE"] = futE;
+    });
+
+    return jatekFut;
+  }
+
   Future<bool> idLetezikE(String id) async {
-    final adat = await databaseReference.child(id).once();
+    final adat = await databaseReference.child(id).child("Jatek").once();
     if (adat.value != null) {
       print("Van id");
       return true;
@@ -76,7 +115,7 @@ class FirebaseConnection {
   }
 
   Future<String> getUserId() async {
-    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    final User user = (await FirebaseAuth.instance.currentUser);
     final String uid = user.uid;
 
     return uid;
