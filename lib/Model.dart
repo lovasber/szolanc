@@ -16,6 +16,7 @@ class Model {
   int JATEKOSSORSZAM;
   String adottSzo;
   String jatekosNev;
+  bool futE;
 
   Model(String jatekId)  {
     var uuid = Uuid();
@@ -23,6 +24,7 @@ class Model {
     JATEKID = jatekId;
     setConnection();
     JATEKOSID = uuid.v1();
+    this.futE = false;
   }
 
   setConnection() async {
@@ -35,7 +37,7 @@ class Model {
 
   Future<String> readData() async {
     String szavak = await rootBundle.loadString('assets/szavak.txt');
-    this.osszesSzo = szavak.split("\n");
+    this.osszesSzo =  szavak.split("\n");
     Random rnd = new Random();
     return osszesSzo[rnd.nextInt(osszesSzo.length)];
   }

@@ -3,6 +3,10 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'Model.dart';
 import 'App.dart';
 
+
+/// KEll figyelni hogy valamelyik user megnyomja e a játék indítását ✅
+
+
   class WaitingForPlayers extends StatefulWidget {
     String id;
     List<String> usernames;
@@ -17,12 +21,14 @@ import 'App.dart';
     }
   }
 
-  class HomeState extends State<WaitingForPlayers> {
+  class HomeState extends State<StatefulWidget> {
     bool _hasCard;
     String id;
     bool isNewGame;
     List<String> usernames;
     Model model;
+    bool futE = false;
+
 
     HomeState({this.id, this.usernames, this.isNewGame, this.model});
 
@@ -33,16 +39,35 @@ import 'App.dart';
       //CREATE GAME IN DB!
     }
 
+    refresh() {
+      setState(() {});
+    }
+
     @override
     Widget build(BuildContext context) {
-      List<Widget> children = new List();
-      //Kell egy modell!!!
-      //FirebaseDatabase({, String databaseURL});
+      List<Widget> children = [];
+
+      this.model.firebaseConn.databaseReference.child(this.id).onValue.listen((event){
+        var snapshot = event.snapshot;
+        bool value = snapshot.value['Jatek']['JatekFutE'];
+        this.futE = value;
+        //this.model.futE = value;
+        if(this.futE == true) {
+          //print("changed - ${value}");
+          refresh();
+        }
+      });
 
       children.add(_buildBackground());
       if (_hasCard) children.add(_buildCard());
 
-      return Scaffold(
+      //print("statefulE  - ${this.futE}");
+
+      return this.futE ?
+      SzolancApp(ujGamE: false, model: this.model, gameID: this.model.JATEKID,szo: this.model.adottSzo, title: this.model.JATEKID)
+      :
+      Scaffold(
+
         backgroundColor: Color.fromRGBO(66, 66, 66, 1),
         appBar: AppBar(
           title: Text(
@@ -111,11 +136,12 @@ import 'App.dart';
 
   jatekInditasaPressed(BuildContext context, String id){
     this.model.firebaseConn.setJatekFutE( id, true);
+    this.model.futE = true;
     navigateToSubPage(context,
         SzolancApp(
             gameID: id,
             title: id,
-            ujGamE: true,
+            ujGamE: this.isNewGame,
             model: this.model,
         )
     );

@@ -55,7 +55,7 @@ class FirebaseConnection {
     model.osszesBeirtSzoLista = await getbeirtSzavakLista(jatekid);
   }
 
-  Future<String> ujJatekLetrehoz(String jatekid, Model model) async {
+  Future<String> ujJatekLetrehoz(String jatekid, Model model, bool futE) async {
     //ujszo
     var szo = await model.readData();
     model.osszesBeirtSzoLista.add(szo);
@@ -65,7 +65,7 @@ class FirebaseConnection {
       'adottSzo': szo,
       'beirtszavak': model.osszesBeirtSzoLista,
       'AktivJatekos': 1,
-      'JatekFutE': false
+      'JatekFutE': futE
     });
 
     databaseReference
@@ -92,14 +92,8 @@ class FirebaseConnection {
 
   Future<bool> setJatekFutE(String id, bool futE) async {
     bool jatekFut;
-    await databaseReference
-        .child(id)
-        .child("Jatek")
-        .once()
-        .then((DataSnapshot snapshot) {
-      snapshot.value["JatekFutE"] = futE;
-    });
-
+    var jatekId = await databaseReference.child(id).child("Jatek");
+    jatekId.child("JatekFutE").set(true);
     return jatekFut;
   }
 

@@ -11,22 +11,49 @@ import 'WaitingForPlayers.dart';
 
 TextEditingController tfController = new TextEditingController();
 
-class Menu extends StatelessWidget {
+class Menu extends StatefulWidget {
   String gameID;
   Model model;
-
+  bool futE;
+  
   Menu(){
     setModel();
   }
 
 
   setModel() async {
+    this.futE = false;
     this.gameID = await randomString(10);
     this.model = await new Model(gameID);
   }
 
   @override
+  _Menu createState() => _Menu(model:this.model, gameID: this.gameID);
+
+}
+
+class _Menu extends State<Menu>{
+  String gameID;
+  Model model;
+  bool futE = false;
+
+  _Menu({this.model, this.gameID});
+
+  Future<bool> futeAJatek() async {
+    this.model.firebaseConn.databaseReference.child(this.gameID).onValue.listen((event){
+      var snapshot = event.snapshot;
+      bool value = snapshot.value['Jatek']['JatekFutE'];
+      print("changed - ${value}");
+      //this.model.futE = value;
+      this.futE = value;
+      return value;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    //SzolancApp(ujGamE: false, model: model, gameID: this.model.JATEKID,szo: this.model.adottSzo)
+
     return Scaffold(
       backgroundColor: Color.fromRGBO(66, 66, 66, 1),
       appBar: AppBar(
@@ -81,23 +108,6 @@ class Menu extends StatelessWidget {
               },
             ),
           ),
-          Center(
-            child: RaisedButton(
-              color: Colors.orangeAccent,
-              shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(25)),
-              child: Text(
-                "QRcode test",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 17,
-                ),
-              ),
-              onPressed: () {
-                navigateToSubPage(context, WaitingForPlayers());
-              },
-            ),
-          ),
         ],
       ),
     );
@@ -105,23 +115,16 @@ class Menu extends StatelessWidget {
 
   void ujJatekPressed(BuildContext context) async{
     print("ujjatekpressed");
-
-    await this.model.firebaseConn.ujJatekLetrehoz(this.gameID, this.model);
+    this.gameID = randomString(10);
+    this.model.JATEKID = this.gameID;
+    await this.model.firebaseConn.ujJatekLetrehoz(this.gameID, this.model, false);
 
     navigateToSubPage(
         context,
-        /*
-        SzolancApp(
-                      gameID: id,
-                      title: id,
-                      ujGamE: true,
-                    )
-        */
         WaitingForPlayers(id: this.gameID, model: this.model)
     );
   }
 }
-
 class Csatlakozas extends StatelessWidget {
   Model model;
 
@@ -204,8 +207,9 @@ class Csatlakozas extends StatelessWidget {
 
   meglevoJatekhozCsatlakoz(BuildContext context) async{
       FirebaseConnection fbc = new FirebaseConnection(); ///!!!!!!!!
-      if (await fbc.idLetezikE(tfController.text)) {
-        String jatekId = tfController.text;
+      String beirtId = tfController.text.toUpperCase();
+      if (await fbc.idLetezikE(beirtId)) {
+        String jatekId = beirtId;
         this.model.setJAtekID(jatekId);
         //print("Van ilyen id");
         navigateToSubPage(

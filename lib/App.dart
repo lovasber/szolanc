@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:szolanc/CountDownTimer.dart';
+import 'GameOver.dart';
 import 'Model.dart';
 import 'Controller.dart';
 
@@ -24,10 +25,12 @@ class _SzolancAppState extends State<SzolancApp> {
   Controller controller;
   TextEditingController tfController = new TextEditingController();
   String adottSzo = "";
+  bool ujGamE;
 
   _SzolancAppState(String gameID, bool ujgamE, String szo, Model model) {
     this.model = model;
     this.controller = new Controller(this.model);
+    this. ujGamE = ujGamE;
 
     this.model.firebaseConn.databaseReference
         .child(gameID)
@@ -46,7 +49,7 @@ class _SzolancAppState extends State<SzolancApp> {
         });
 
       if (ujgamE) {
-        this.model.firebaseConn.ujJatekLetrehoz(gameID, this.model);
+        this.model.firebaseConn.ujJatekLetrehoz(gameID, this.model, true);
       } else {
         betolt(gameID);
         controller.model.firebaseConn.megelevoJatekhozCsatlakoz(gameID, this.model);
@@ -64,6 +67,7 @@ class _SzolancAppState extends State<SzolancApp> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
         label: Text("OK"),
@@ -75,7 +79,7 @@ class _SzolancAppState extends State<SzolancApp> {
           //if(this.controller.model.firebaseConn.getAktivSorszam()==model.jatekosId){
           //widget.ujGame = true;
           //}else{
-          widget.ujGamE = false;
+          widget.ujGamE = this.ujGamE;
           //}
           CountDownTimer().setTimer(10);
           if (this.controller.beirtSzoEllenoriz(tfController.text, adottSzo)) {
@@ -109,8 +113,27 @@ class _SzolancAppState extends State<SzolancApp> {
             Row(
               children: <Widget>[
                 Expanded(
-                  child: CountDownTimer(),
-                )
+                    flex: 1,
+                    child: ElevatedButton(
+                      child: Text(
+                          "Vége"
+                      ),
+                      onPressed: ()=>{
+                        vegeOnPressed(context)
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.redAccent,
+                      ),
+                    )
+                ),
+              ],
+            ),
+            SizedBox(height: 15.0),
+            Row(
+              children: <Widget>[
+                //Expanded(
+                 // child: CountDownTimer(),
+                //)
 
                 //Text("na")
               ],
@@ -143,12 +166,14 @@ class _SzolancAppState extends State<SzolancApp> {
                     children = <Widget>[Text("...")];
                   }
                   return Column(
+
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: children,
                   );
                 }),
             SizedBox(height: 25.0),
+
             Row(
               children: <Widget>[
                 Expanded(
@@ -183,18 +208,7 @@ class _SzolancAppState extends State<SzolancApp> {
                 children: <Widget>[
                   RaisedButton(
                     child: Text(
-                      "Minden szó",
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20.0,
-                  ),
-                  RaisedButton(
-                    child: Text(
-                      "Saját szavaim",
+                      "Eddigi lánc:",
                       style: TextStyle(
                         color: Colors.white,
                       ),
@@ -225,26 +239,7 @@ class _SzolancAppState extends State<SzolancApp> {
                     ),
                   ),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: SizedBox(
-                    height: 500.0,
-                    child: new ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: model.osszesBeirtSzoLista.length,
-                      itemBuilder: (BuildContext ctxt, int index) {
-                        return new Text(
-                          //LISTA Minden szó
-                          model.osszesBeirtSzoLista[index],
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
+
               ],
             )
 
@@ -262,6 +257,11 @@ class _SzolancAppState extends State<SzolancApp> {
         ),
       ),
     );
+  }
+
+  vegeOnPressed(BuildContext context) {
+    this.model.firebaseConn.setJatekFutE(this.model.JATEKID, false);
+    navigateToSubPage(context, GameOver());
   }
 }
 
