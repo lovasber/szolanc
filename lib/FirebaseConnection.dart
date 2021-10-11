@@ -31,10 +31,15 @@ class FirebaseConnection {
     if (index > jatekosDb) {
       index = 1;
     }
-
+/*
     jatekId.set(
         {'adottSzo': szo, 'beirtszavak': beirtSzavak, 'AktivJatekos': index});
 
+
+ */
+    jatekId.child("adottSzo").set(szo);
+    jatekId.child("beirtszavak").set(model.osszesBeirtSzoLista);
+    jatekId.child('AktivJatekos').set(index);
     model.osszesBeirtSzoLista = await getbeirtSzavakLista(jatekid);
 
     //getData();
@@ -93,7 +98,7 @@ class FirebaseConnection {
   Future<bool> setJatekFutE(String id, bool futE) async {
     bool jatekFut;
     var jatekId = await databaseReference.child(id).child("Jatek");
-    jatekId.child("JatekFutE").set(true);
+    await jatekId.child("JatekFutE").set(true);
     return jatekFut;
   }
 

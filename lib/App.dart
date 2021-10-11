@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:szolanc/CountDownTimer.dart';
+//import 'package:szolanc/CountDownTimer.dart';
 import 'GameOver.dart';
 import 'Model.dart';
 import 'Controller.dart';
@@ -81,7 +81,7 @@ class _SzolancAppState extends State<SzolancApp> {
           //}else{
           widget.ujGamE = this.ujGamE;
           //}
-          CountDownTimer().setTimer(10);
+         // CountDownTimer().setTimer(10);
           if (this.controller.beirtSzoEllenoriz(tfController.text, adottSzo)) {
             String beirt = tfController.text;
 
@@ -90,7 +90,7 @@ class _SzolancAppState extends State<SzolancApp> {
             model.firebaseConn.createRecord(tfController.text, model.JATEKID,
                 model.osszesBeirtSzoLista, model);
             tfController.text = "";
-            CountDownTimerState().startTimer(); //Nullázza az időzítőt
+            // CountDownTimerState().startTimer(); //Nullázza az időzítőt
             this.setState(() {});
           }
         },

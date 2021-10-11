@@ -143,6 +143,7 @@ import 'App.dart';
             title: id,
             ujGamE: this.isNewGame,
             model: this.model,
+
         )
     );
   }
