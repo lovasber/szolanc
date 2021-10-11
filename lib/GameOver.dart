@@ -39,8 +39,8 @@ class GameOver extends StatelessWidget{
             child: Text(
               "Újra"
             ),
-           onPressed: (){
-             navigateToSubPage(context, Menu());
+           onPressed: ()=>{
+             navigateToSubPage(context, new Menu())
              },
           ),
 
