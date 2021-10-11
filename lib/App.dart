@@ -26,11 +26,13 @@ class _SzolancAppState extends State<SzolancApp> {
   TextEditingController tfController = new TextEditingController();
   String adottSzo = "";
   bool ujGamE;
+  bool futE;
 
   _SzolancAppState(String gameID, bool ujgamE, String szo, Model model) {
     this.model = model;
     this.controller = new Controller(this.model);
     this. ujGamE = ujGamE;
+    this.futE = true;
 
     this.model.firebaseConn.databaseReference
         .child(gameID)
@@ -63,10 +65,26 @@ class _SzolancAppState extends State<SzolancApp> {
     model.beirtSzavakS = model.osszesBeirtSzoLista.toString();
   }
 
+  refresh() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
+
+    this.model.firebaseConn.databaseReference.child(this.model.JATEKID).onValue.listen((event){
+      var snapshot = event.snapshot;
+      bool value = snapshot.value['Jatek']['JatekFutE'];
+      this.futE = value;
+      //this.model.futE = value;
+      if(this.futE != true) {
+        //print("changed - ${value}");
+        refresh();
+      }
+    });
+
+    return this.futE ? Scaffold(
 
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
@@ -256,7 +274,9 @@ class _SzolancAppState extends State<SzolancApp> {
           ],
         ),
       ),
-    );
+    )
+    :
+    GameOver();
   }
 
   vegeOnPressed(BuildContext context) {

@@ -98,7 +98,7 @@ class FirebaseConnection {
   Future<bool> setJatekFutE(String id, bool futE) async {
     bool jatekFut;
     var jatekId = await databaseReference.child(id).child("Jatek");
-    await jatekId.child("JatekFutE").set(true);
+    await jatekId.child("JatekFutE").set(futE);
     return jatekFut;
   }
 
