@@ -58,12 +58,14 @@ class QrScanner extends StatelessWidget {
 
     try {
       qrValue = await FlutterBarcodeScanner.scanBarcode("#ff6666", "Mégse", false, ScanMode.QR);
-      navigateToSubPage(context, WaitingForPlayers(
+      navigateToSubPage(context,
+        WaitingForPlayers(
           id: qrValue,
           model: this.model,
-      ));
+        )
+      );
     } on PlatformException {
-      qrValue = 'Failed to get platform version.';
+      qrValue = 'Hiba a csatlakozás során.';
     }
 
   }
