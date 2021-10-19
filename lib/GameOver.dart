@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:szolanc/App.dart';
 import 'package:szolanc/menu.dart';
 
+import 'Model.dart';
+
 //Ugyanazzal a csapattal új játék
 //csak kiírja a nyerteseket
 
 class GameOver extends StatelessWidget{
   String jatekId;
   String gyoztes;
+  Model model;
+
+  GameOver({this.model});
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +36,33 @@ class GameOver extends StatelessWidget{
             SizedBox(
               height: 15.0,
             ),
+            Text(
+                "A teljes lánc:"+ $teljesSzoLanc(),
+                //style: Theme.of(context).textTheme.subtitle1,
+                style: TextStyle(
+                  //color: Color.fromRGBO(0, 0, 0, 0),
+                  color: Color.fromRGBO(255, 255, 255, 2),
+                  fontSize: 20,
+                ),
+            ),
+
+            SizedBox(
+              height: 15.0,
+            ),
+            Center(
+              child: Text(
+                "Leghosszabb szó: "+ $leghosszabbSzo(),
+                //style: Theme.of(context).textTheme.subtitle1,
+                style: TextStyle(
+                  //color: Color.fromRGBO(0, 0, 0, 0),
+                  color: Color.fromRGBO(255, 255, 255, 2),
+                  fontSize: 20,
+                ),
+              ),
+            ),
+           SizedBox(
+             height: 15,
+           ),
            Center(
           child: RaisedButton(
             color: Colors.orangeAccent,
@@ -51,6 +83,23 @@ class GameOver extends StatelessWidget{
     ); 
   }
 
+  String $leghosszabbSzo() {
+    String leghosszabbSzo = "";
+    for(String szo in this.model.osszesBeirtSzoLista){
+      if(leghosszabbSzo.length < szo.length){
+        leghosszabbSzo = szo;
+      }
+    }
+    return leghosszabbSzo;
+  }
+
+  String $teljesSzoLanc() {
+    String teljesLanc = "";
+    for(String szo in this.model.osszesBeirtSzoLista){
+      teljesLanc += "\n"+szo;
+    }
+    return teljesLanc;
+  }
 }
 
 Future navigateToSubPage(context, target) async {

@@ -276,12 +276,12 @@ class _SzolancAppState extends State<SzolancApp> {
       ),
     )
     :
-    GameOver();
+    GameOver(model: this.model);
   }
 
   vegeOnPressed(BuildContext context) {
     this.model.firebaseConn.setJatekFutE(this.model.JATEKID, false);
-    navigateToSubPage(context, GameOver());
+    navigateToSubPage(context, GameOver(model:this.model));
   }
 }
 
